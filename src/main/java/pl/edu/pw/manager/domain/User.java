@@ -13,13 +13,21 @@ public class User {
     private String username;
     private String password;
     private String masterPassword;
-    //private List<Password> passwords;
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<ServicePassword> passwords;
 
     public User() {
     }
 
-    public User(Long id, String username, String password, String masterPassword) {
+    public User(Long id, String username, String password, String masterPassword, List<ServicePassword> passwords) {
         this.id = id;
+        this.username = username;
+        this.password = password;
+        this.masterPassword = masterPassword;
+        this.passwords = passwords;
+    }
+
+    public User(String username, String password, String masterPassword) {
         this.username = username;
         this.password = password;
         this.masterPassword = masterPassword;
@@ -57,4 +65,11 @@ public class User {
         this.masterPassword = masterPassword;
     }
 
+    public List<ServicePassword> getPasswords() {
+        return passwords;
+    }
+
+    public void setPasswords(List<ServicePassword> passwords) {
+        this.passwords = passwords;
+    }
 }

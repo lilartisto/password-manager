@@ -4,20 +4,20 @@ import javax.persistence.*;
 
 @Entity
 @Table
-public class Password {
+public class ServicePassword {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
+    private String serviceName;
     private String password;
 
-    public Password() {
+    public ServicePassword() {
     }
 
-    public Password(Long id, String name, String password) {
+    public ServicePassword(Long id, String name, String password) {
         this.id = id;
-        this.name = name;
+        this.serviceName = name;
         this.password = password;
     }
 
@@ -30,11 +30,11 @@ public class Password {
     }
 
     public String getName() {
-        return name;
+        return serviceName;
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.serviceName = name;
     }
 
     public String getPassword() {

@@ -35,29 +35,26 @@
     </ul>
   </div>
 </nav>
+
 <br>
 <br>
 <div class="container">
   <div class="row">
     <div class="col-lg-6 col-md-6 col-sm-6 container justify-content-center card">
-      <h1 class="text-center"> Login </h1>
+      <h1 class="text-center"> Register </h1>
       <div class="card-body">
-        <form th:action="@{/login}" method="POST">
+        <form th:action="@{/register}" th:object="${user}" method="POST">
           <div class="form-group">
 
-            <div th:if="${param.error}" class="alert alert-danger">
-              Invalid username and password.
-            </div>
-
-            <div th:if="${param.logout}" class="alert alert-success">
-              You have been logged out.
+            <div th:if="${error != null}" class="alert alert-danger">
+              <p th:text="${error}"></p>
             </div>
 
             <label> Username </label>
             <input
                     type="text"
-                    id="username"
                     name="username"
+                    th:field="*{username}"
                     class="form-control"
                     placeholder="Username"
             />
@@ -67,10 +64,43 @@
             <label> Password </label>
             <input
                     type="password"
-                    id="password"
                     name="password"
+                    th:field="*{password}"
                     class="form-control"
                     placeholder="Password"
+            />
+          </div>
+
+          <div class="form-group">
+            <label> Repeat Password </label>
+            <input
+                    type="password"
+                    name="password"
+                    th:field="*{passwordRepeat}"
+                    class="form-control"
+                    placeholder="Repeat password"
+            />
+          </div>
+
+          <div class="form-group">
+            <label> Master Password </label>
+            <input
+                    type="password"
+                    name="password"
+                    th:field="*{masterPassword}"
+                    class="form-control"
+                    placeholder="Master Password"
+            />
+          </div>
+
+          <div class="form-group">
+            <label> Repeat Master Password </label>
+            <input
+                    type="password"
+                    name="password"
+                    th:field="*{masterPasswordRepeat}"
+                    class="form-control"
+                    placeholder="Repeat master password"
             />
           </div>
 
