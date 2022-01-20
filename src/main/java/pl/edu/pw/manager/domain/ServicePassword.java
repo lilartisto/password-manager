@@ -21,6 +21,11 @@ public class ServicePassword {
         this.password = password;
     }
 
+    public ServicePassword(String serviceName, String password) {
+        this.serviceName = serviceName;
+        this.password = password;
+    }
+
     public Long getId() {
         return id;
     }

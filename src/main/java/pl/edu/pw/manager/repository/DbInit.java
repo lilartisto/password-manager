@@ -5,6 +5,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import pl.edu.pw.manager.domain.ServicePassword;
 import pl.edu.pw.manager.domain.User;
+import pl.edu.pw.manager.security.cipher.AESAdapter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,6 +28,7 @@ public class DbInit implements CommandLineRunner {
         User dan = new User();
         dan.setUsername("Maciek");
         dan.setPassword(passwordEncoder.encode("123"));
+        dan.setMasterPassword(passwordEncoder.encode("321"));
 
         List<ServicePassword> passwords = new ArrayList<>();
         passwords.add(new ServicePassword(null, "Facebook", "haslo"));
