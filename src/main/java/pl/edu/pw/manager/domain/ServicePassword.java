@@ -49,4 +49,12 @@ public class ServicePassword {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public String getServiceName() {
+        return serviceName;
+    }
+
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
+    }
 }

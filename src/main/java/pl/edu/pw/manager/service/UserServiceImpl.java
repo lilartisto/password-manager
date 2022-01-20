@@ -6,10 +6,12 @@ import pl.edu.pw.manager.domain.ServicePassword;
 import pl.edu.pw.manager.domain.User;
 import pl.edu.pw.manager.dto.NewServicePasswordDTO;
 import pl.edu.pw.manager.dto.RegisterUserDTO;
+import pl.edu.pw.manager.dto.ServicePasswordDTO;
 import pl.edu.pw.manager.repository.UserRepository;
 import pl.edu.pw.manager.security.cipher.AESAdapter;
 import pl.edu.pw.manager.security.validation.NewServicePasswordValidator;
 import pl.edu.pw.manager.security.validation.RegisterUserValidator;
+import pl.edu.pw.manager.service.mapper.ServicePasswordMapper;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -19,6 +21,7 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -71,5 +74,16 @@ public class UserServiceImpl implements UserService {
                 newPassword.getServiceName(),
                 new AESAdapter().encrypt(newPassword.getPassword(), newPassword.getMasterPassword())
         ));
+    }
+
+    @Override
+    public List<ServicePasswordDTO> getServicePasswords(String username) {
+        User user = userRepository.findByUsername(username);
+
+        if(user != null) {
+            return new ServicePasswordMapper().map(user.getPasswords());
+        } else {
+            throw new IllegalArgumentException(username + " does not exist");
+        }
     }
 }

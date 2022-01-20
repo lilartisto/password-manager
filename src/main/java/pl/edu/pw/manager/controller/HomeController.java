@@ -6,9 +6,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import pl.edu.pw.manager.dto.NewServicePasswordDTO;
+import pl.edu.pw.manager.dto.ServicePasswordDTO;
 import pl.edu.pw.manager.service.UserService;
 
 import java.security.Principal;
+import java.util.List;
 
 @Controller
 public class HomeController {
@@ -21,6 +23,8 @@ public class HomeController {
 
     @GetMapping("/")
     public String homeView(Model model, Principal principal) {
+        List<ServicePasswordDTO> servicePasswords = userService.getServicePasswords(principal.getName());
+        model.addAttribute("servicePasswords", servicePasswords);
         return "passwords_list";
     }
 
