@@ -29,10 +29,7 @@ public class AESAdapter {
     private final String salt = "=T:TqUTjK(LR(#q*";
 
 
-    public String encrypt(String input, String password)
-            throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException,
-            BadPaddingException, IllegalBlockSizeException, InvalidAlgorithmParameterException, IOException, InvalidKeySpecException {
-
+    public String encrypt(String input, String password) throws Exception {
         SecretKey key = getKeyFromPassword(password);
         IvParameterSpec iv = generateIv();
         Cipher cipher = Cipher.getInstance(algorithm);
@@ -42,10 +39,7 @@ public class AESAdapter {
         return Base64.getEncoder().encodeToString(concatenate(iv.getIV(), cipherText));
     }
 
-    public String decrypt(String cipherText, String password)
-            throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException,
-            InvalidKeyException, BadPaddingException, IllegalBlockSizeException, InvalidKeySpecException {
-
+    public String decrypt(String cipherText, String password) throws Exception {
         SecretKey key = getKeyFromPassword(password);
         Cipher cipher = Cipher.getInstance(algorithm);
         cipher.init(Cipher.DECRYPT_MODE, key, generateIv());
@@ -72,11 +66,11 @@ public class AESAdapter {
     }
 
     private byte[] concatenate(byte[] x, byte[] y) throws IOException {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
-        outputStream.write( x );
-        outputStream.write( y );
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        outputStream.write(x);
+        outputStream.write(y);
 
-        return outputStream.toByteArray( );
+        return outputStream.toByteArray();
     }
 
 }
