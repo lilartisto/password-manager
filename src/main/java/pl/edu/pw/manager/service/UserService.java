@@ -12,5 +12,6 @@ public interface UserService {
     void addNewPassword(String username, NewServicePasswordDTO newPassword) throws Exception;
     List<ServicePasswordDTO> getServicePasswords(String username);
     ServicePasswordDTO getServicePassword(String username, Long servicePasswordId, String masterPassword) throws Exception;
+    void deletePassword(String username, Long servicePasswordId, String masterPassword);
 
 }

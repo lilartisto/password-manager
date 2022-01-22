@@ -1,5 +1,6 @@
 package pl.edu.pw.manager.controller;
 
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -56,7 +57,7 @@ public class HomeController {
     @GetMapping("/show/{id}")
     public String showPasswordView(Model model, @PathVariable("id") Long id) {
         model.addAttribute("masterPassword", new TextDTO());
-        model.addAttribute("id", id);
+        model.addAttribute("postURL", "/show/" + id);
         return "master_password_form";
     }
 
@@ -65,8 +66,33 @@ public class HomeController {
                                @ModelAttribute("masterPassword") TextDTO masterPassword) {
         try {
             ServicePasswordDTO password = userService.getServicePassword(principal.getName(), id, masterPassword.getValue());
-            model.addAttribute("servicePassword", password);
+            model.addAttribute("password", password);
             return "show_service_password";
+        } catch (AccessControlException e) {
+            model.addAttribute("error", e.getMessage() + ". Please check your URL");
+            return "master_password_form";
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("error", e.getMessage());
+            return "master_password_form";
+        } catch (Exception e) {
+            model.addAttribute("error", "Unexpected error has occurred");
+            return "master_password_form";
+        }
+    }
+
+    @GetMapping("/delete/{id}")
+    public String deletePasswordView(Model model, @PathVariable("id") Long id) {
+        model.addAttribute("masterPassword", new TextDTO());
+        model.addAttribute("postURL", "/delete/" + id);
+        return "master_password_form";
+    }
+
+    @PostMapping("/delete/{id}")
+    public String deletePassword(Model model, Principal principal, @PathVariable("id") Long id,
+                                 @ModelAttribute("masterPassword") TextDTO masterPassword) {
+        try {
+            userService.deletePassword(principal.getName(), id, masterPassword.getValue());
+            return "redirect:/";
         } catch (AccessControlException e) {
             model.addAttribute("error", e.getMessage() + ". Please check your URL");
             return "master_password_form";

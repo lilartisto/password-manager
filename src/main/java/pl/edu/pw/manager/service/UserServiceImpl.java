@@ -114,4 +114,42 @@ public class UserServiceImpl implements UserService {
         }
         throw new AccessControlException("Password not found in " + user.getUsername() + " passwords");
     }
+
+    @Override
+    public void deletePassword(String username, Long servicePasswordId, String masterPassword) {
+        User user = userRepository.findByUsername(username);
+
+        if(user != null) {
+            if (passwordEncoder.matches(masterPassword, user.getMasterPassword())) {
+                deletePassword(user, servicePasswordId);
+            } else {
+                throw new IllegalArgumentException("Wrong master password");
+            }
+        } else {
+            throw new IllegalArgumentException(username + " does not exist");
+        }
+    }
+
+    private void deletePassword(User user, Long id) {
+        List<ServicePassword> passwords = user.getPasswords();
+        boolean removed = passwords.removeIf((p) -> (p.getId().equals(id)));
+
+        if (removed) {
+            userRepository.save(user);
+        } else {
+            throw new AccessControlException("Password not found in " + user.getUsername() + " passwords");
+        }
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
