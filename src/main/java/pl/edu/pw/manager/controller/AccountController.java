@@ -8,9 +8,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import pl.edu.pw.manager.dto.RegisterUserDTO;
 import pl.edu.pw.manager.service.UserService;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 @Controller
 public class AccountController {
 
+    private final Logger logger = Logger.getLogger(getClass().getName());
     private final UserService userService;
 
     public AccountController(UserService userService) {
@@ -33,8 +37,12 @@ public class AccountController {
         try {
             userService.registerUser(user);
             return "redirect:/login";
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
+            return "register";
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, e.getMessage(), e.getCause());
+            model.addAttribute("error", "Unexpected error has occurred");
             return "register";
         }
     }

@@ -1,5 +1,6 @@
 package pl.edu.pw.manager.controller;
 
+import org.apache.juli.logging.Log;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,10 +17,13 @@ import java.nio.file.AccessDeniedException;
 import java.security.AccessControlException;
 import java.security.Principal;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Controller
 public class HomeController {
 
+    private final Logger logger = Logger.getLogger(getClass().getName());
     private final UserService userService;
 
     public HomeController(UserService userService) {
@@ -49,6 +53,7 @@ public class HomeController {
             model.addAttribute("error", e.getMessage());
             return "add_password";
         } catch (Exception e) {
+            logger.log(Level.SEVERE, e.getMessage(), e.getCause());
             model.addAttribute("error", "Unexpected error has occurred");
             return "add_password";
         }
@@ -69,12 +74,14 @@ public class HomeController {
             model.addAttribute("password", password);
             return "show_service_password";
         } catch (AccessControlException e) {
+            logger.log(Level.SEVERE, e.getMessage() + ". Password id=" + id, e.getCause());
             model.addAttribute("error", e.getMessage() + ". Please check your URL");
             return "master_password_form";
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
             return "master_password_form";
         } catch (Exception e) {
+            logger.log(Level.SEVERE, e.getMessage(), e.getCause());
             model.addAttribute("error", "Unexpected error has occurred");
             return "master_password_form";
         }
@@ -94,12 +101,14 @@ public class HomeController {
             userService.deletePassword(principal.getName(), id, masterPassword.getValue());
             return "redirect:/";
         } catch (AccessControlException e) {
+            logger.log(Level.SEVERE, e.getMessage() + ". Password id=" + id, e.getCause());
             model.addAttribute("error", e.getMessage() + ". Please check your URL");
             return "master_password_form";
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
             return "master_password_form";
         } catch (Exception e) {
+            logger.log(Level.SEVERE, e.getMessage(), e.getCause());
             model.addAttribute("error", "Unexpected error has occurred");
             return "master_password_form";
         }
