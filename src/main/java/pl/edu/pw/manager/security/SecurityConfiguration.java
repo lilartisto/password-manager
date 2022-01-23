@@ -9,13 +9,20 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import pl.edu.pw.manager.security.login.CustomLoginFailureHandler;
+import pl.edu.pw.manager.security.login.CustomLoginSuccessHandler;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+
+    private final CustomLoginSuccessHandler loginSuccessHandler;
+    private final CustomLoginFailureHandler loginFailureHandler;
     private final UserPrincipalDetailsService userPrincipalDetailsService;
 
-    public SecurityConfiguration(UserPrincipalDetailsService userPrincipalDetailsService) {
+    public SecurityConfiguration(CustomLoginSuccessHandler loginSuccessHandler, CustomLoginFailureHandler loginFailureHandler, UserPrincipalDetailsService userPrincipalDetailsService) {
+        this.loginSuccessHandler = loginSuccessHandler;
+        this.loginFailureHandler = loginFailureHandler;
         this.userPrincipalDetailsService = userPrincipalDetailsService;
     }
 
@@ -27,13 +34,19 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+                .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/register").permitAll()
-                .antMatchers("/**").authenticated()
+                .antMatchers("/login**").permitAll()
+                .anyRequest().authenticated()
                 .and()
                 .formLogin()
-                .loginPage("/login").permitAll()
-                .defaultSuccessUrl("/")
+                .loginPage("/login")
+                .defaultSuccessUrl("/", true)
+                .successHandler(loginSuccessHandler)
+                .failureUrl("/login?error")
+                .failureHandler(loginFailureHandler)
+                .permitAll()
                 .and()
                 .logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/login");
     }
@@ -48,7 +61,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    PasswordEncoder passwordEncoder() {
+    public static PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(12);
     }
 }

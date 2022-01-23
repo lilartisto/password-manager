@@ -46,11 +46,7 @@
           <div class="form-group">
 
             <div th:if="${param.error}" class="alert alert-danger">
-              Invalid username or password.
-            </div>
-
-            <div th:if="${param.logout}" class="alert alert-success">
-              You have been logged out.
+              <p th:text="${session.SPRING_SECURITY_LAST_EXCEPTION.message}"></p>
             </div>
 
             <label> Username </label>

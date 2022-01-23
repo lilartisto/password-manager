@@ -10,7 +10,8 @@ import java.util.Collection;
 import java.util.List;
 
 public class UserPrincipal implements UserDetails {
-    private User user;
+
+    private final User user;
 
     public UserPrincipal(User user) {
         this.user = user;
@@ -42,7 +43,7 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return user.getAccountNonLocked();
     }
 
     @Override
@@ -53,5 +54,9 @@ public class UserPrincipal implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public User getUser() {
+        return user;
     }
 }

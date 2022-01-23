@@ -23,6 +23,7 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -139,6 +140,47 @@ public class UserServiceImpl implements UserService {
         } else {
             throw new AccessControlException("Password not found in " + user.getUsername() + " passwords");
         }
+    }
+
+    @Override
+    public User getByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
+
+    @Override
+    public void increaseFailedAttempts(User user) {
+        user.setFailedAttempt(user.getFailedAttempt() + 1);
+        userRepository.save(user);
+    }
+
+    @Override
+    public void lock(User user) {
+        user.setAccountNonLocked(false);
+        user.setLockTime(new Date());
+
+        userRepository.save(user);
+    }
+
+    @Override
+    public boolean unlockWhenTimeExpired(User user) {
+        long lockTimeInMillis = user.getLockTime().getTime();
+        long currentTimeInMillis = System.currentTimeMillis();
+
+        if (lockTimeInMillis + LOCK_TIME_DURATION < currentTimeInMillis) {
+            user.setAccountNonLocked(true);
+            user.setLockTime(null);
+            user.setFailedAttempt(0);
+
+            userRepository.save(user);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void resetFailedAttempts(User user) {
+        user.setFailedAttempt(0);
+        userRepository.save(user);
     }
 }
 
