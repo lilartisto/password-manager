@@ -16,7 +16,7 @@ public class ServicePasswordMapper {
                 servicePasswords.add(new ServicePasswordDTO(
                         password.getId(),
                         password.getServiceName(),
-                        password.getPassword()
+                        null
                 ));
             }
         }

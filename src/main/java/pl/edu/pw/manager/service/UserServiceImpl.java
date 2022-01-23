@@ -1,6 +1,7 @@
 package pl.edu.pw.manager.service;
 
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import pl.edu.pw.manager.domain.ServicePassword;
@@ -25,6 +26,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -54,18 +56,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void addNewPassword(String username, NewServicePasswordDTO newPassword) throws Exception {
-        User user = userRepository.findByUsername(username);
+        User user = getByUsername(username);
 
-        if (user == null) {
-            throw new IllegalArgumentException(username + " does not exist");
-        }
+        validateUser(user, newPassword.getMasterPassword());
         new NewServicePasswordValidator().validate(newPassword);
 
-        if (passwordEncoder.matches(newPassword.getMasterPassword(), user.getMasterPassword())) {
-            saveNewPassword(user, newPassword);
-        } else {
-            throw new IllegalArgumentException("Master password is wrong");
-        }
+        saveNewPassword(user, newPassword);
     }
 
     private void saveNewPassword(User user, NewServicePasswordDTO newPassword) throws Exception {
@@ -89,17 +85,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ServicePasswordDTO getServicePassword(String username, Long servicePasswordId, String masterPassword) throws Exception {
-        User user = userRepository.findByUsername(username);
+        User user = getByUsername(username);
 
-        if (user != null) {
-            if (passwordEncoder.matches(masterPassword, user.getMasterPassword())) {
-                return getServicePassword(user, servicePasswordId, masterPassword);
-            } else {
-                throw new IllegalArgumentException("Wrong master password");
-            }
-        } else {
-            throw new IllegalArgumentException(username + " does not exist");
-        }
+        validateUser(user, masterPassword);
+
+        return getServicePassword(user, servicePasswordId, masterPassword);
     }
 
     private ServicePasswordDTO getServicePassword(User user, Long id, String masterPassword) throws Exception {
@@ -118,17 +108,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deletePassword(String username, Long servicePasswordId, String masterPassword) {
-        User user = userRepository.findByUsername(username);
+        User user = getByUsername(username);
 
-        if(user != null) {
-            if (passwordEncoder.matches(masterPassword, user.getMasterPassword())) {
-                deletePassword(user, servicePasswordId);
-            } else {
-                throw new IllegalArgumentException("Wrong master password");
-            }
-        } else {
-            throw new IllegalArgumentException(username + " does not exist");
-        }
+        validateUser(user, masterPassword);
+
+        deletePassword(user, servicePasswordId);
     }
 
     private void deletePassword(User user, Long id) {
@@ -182,16 +166,28 @@ public class UserServiceImpl implements UserService {
         user.setFailedAttempt(0);
         userRepository.save(user);
     }
+
+    private void validateUser(User user, String masterPassword) {
+        if (user != null) {
+            if (user.getAccountNonLocked() || unlockWhenTimeExpired(user)) {
+                if (!passwordEncoder.matches(masterPassword, user.getMasterPassword())) {
+                    if (user.getFailedAttempt() < MAX_FAILED_ATTEMPTS - 1) {
+                        increaseFailedAttempts(user);
+                        throw new IllegalArgumentException("Wrong master password");
+                    } else {
+                        lock(user);
+                        throw new IllegalArgumentException("Your account has been locked due to " + MAX_FAILED_ATTEMPTS
+                                + " failed attempts. It will be unlocked after 1 minute.");
+                    }
+                } else {
+                    resetFailedAttempts(user);
+                }
+            } else {
+                throw new IllegalArgumentException("Your account is locked. Try again later");
+            }
+        } else {
+            throw new IllegalArgumentException("User not found");
+        }
+    }
+
 }
-
-
-
-
-
-
-
-
-
-
-
-
