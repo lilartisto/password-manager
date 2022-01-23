@@ -14,7 +14,7 @@ public class RegisterUserValidator {
     }
 
     private void checkIfFieldsAreEmpty(RegisterUserDTO user) {
-        if(user.getUsername().isEmpty() || user.getPassword().isEmpty() || user.getMasterPassword().isEmpty()) {
+        if (user.getUsername().isEmpty() || user.getPassword().isEmpty() || user.getMasterPassword().isEmpty()) {
             throw new IllegalArgumentException("User data cannot be empty");
         }
     }
@@ -23,11 +23,11 @@ public class RegisterUserValidator {
         String password = user.getPassword();
         String masterPassword = user.getMasterPassword();
 
-        if(!password.equals(user.getPasswordRepeat())) {
+        if (!password.equals(user.getPasswordRepeat())) {
             throw new IllegalArgumentException("Passwords are not equal");
-        } else if(!masterPassword.equals(user.getMasterPasswordRepeat())) {
+        } else if (!masterPassword.equals(user.getMasterPasswordRepeat())) {
             throw new IllegalArgumentException("Master passwords are not equal");
-        } else if(password.equals(masterPassword)) {
+        } else if (password.equals(masterPassword)) {
             throw new IllegalArgumentException("Account password and master password cannot be equal");
         }
     }
@@ -35,10 +35,10 @@ public class RegisterUserValidator {
     private void checkPasswordsStrength(RegisterUserDTO user) {
         PasswordValidator validator = passwordValidator();
 
-        if(!validator.validate(new PasswordData(user.getPassword())).isValid()) {
+        if (!validator.validate(new PasswordData(user.getPassword())).isValid()) {
             throw new IllegalArgumentException("Password is not strong enough." +
                     "Password length: 7-30, at least one: uppercase, digit, special and alphabetical character");
-        } else if(!validator.validate(new PasswordData(user.getMasterPassword())).isValid()) {
+        } else if (!validator.validate(new PasswordData(user.getMasterPassword())).isValid()) {
             throw new IllegalArgumentException("Master password is not strong enough." +
                     "Use password with length: 7-30, at least one uppercase, digit, special and alphabetical character");
         }

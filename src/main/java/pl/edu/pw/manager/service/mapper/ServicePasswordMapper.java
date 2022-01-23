@@ -11,8 +11,8 @@ public class ServicePasswordMapper {
     public List<ServicePasswordDTO> map(List<ServicePassword> passwords) {
         List<ServicePasswordDTO> servicePasswords = new LinkedList<>();
 
-        if(passwords != null) {
-            for(ServicePassword password: passwords) {
+        if (passwords != null) {
+            for (ServicePassword password : passwords) {
                 servicePasswords.add(new ServicePasswordDTO(
                         password.getId(),
                         password.getServiceName(),

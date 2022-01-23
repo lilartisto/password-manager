@@ -1,7 +1,5 @@
 package pl.edu.pw.manager.controller;
 
-import org.apache.juli.logging.Log;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,7 +11,6 @@ import pl.edu.pw.manager.dto.ServicePasswordDTO;
 import pl.edu.pw.manager.dto.TextDTO;
 import pl.edu.pw.manager.service.UserService;
 
-import java.nio.file.AccessDeniedException;
 import java.security.AccessControlException;
 import java.security.Principal;
 import java.util.List;

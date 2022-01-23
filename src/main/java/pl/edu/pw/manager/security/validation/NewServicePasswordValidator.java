@@ -5,7 +5,7 @@ import pl.edu.pw.manager.dto.NewServicePasswordDTO;
 public class NewServicePasswordValidator {
 
     public void validate(NewServicePasswordDTO servicePassword) {
-        if(servicePassword.getServiceName() == null || servicePassword.getPassword() == null ||
+        if (servicePassword.getServiceName() == null || servicePassword.getPassword() == null ||
                 servicePassword.getPasswordRepeat() == null || servicePassword.getMasterPassword() == null) {
             throw new IllegalArgumentException("New password cannot contain null fields");
         } else {

@@ -1,7 +1,5 @@
 package pl.edu.pw.manager.service;
 
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.authentication.LockedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import pl.edu.pw.manager.domain.ServicePassword;
@@ -15,18 +13,9 @@ import pl.edu.pw.manager.security.validation.NewServicePasswordValidator;
 import pl.edu.pw.manager.security.validation.RegisterUserValidator;
 import pl.edu.pw.manager.service.mapper.ServicePasswordMapper;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import java.io.IOException;
 import java.security.AccessControlException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.Callable;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -41,7 +30,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void registerUser(RegisterUserDTO user) {
-        if(userRepository.findByUsername(user.getUsername()) != null) {
+        if (userRepository.findByUsername(user.getUsername()) != null) {
             throw new IllegalArgumentException("Username is already taken");
         }
 
@@ -76,7 +65,7 @@ public class UserServiceImpl implements UserService {
     public List<ServicePasswordDTO> getServicePasswords(String username) {
         User user = userRepository.findByUsername(username);
 
-        if(user != null) {
+        if (user != null) {
             return new ServicePasswordMapper().map(user.getPasswords());
         } else {
             throw new IllegalArgumentException(username + " does not exist");
@@ -94,7 +83,7 @@ public class UserServiceImpl implements UserService {
 
     private ServicePasswordDTO getServicePassword(User user, Long id, String masterPassword) throws Exception {
         List<ServicePassword> passwords = user.getPasswords();
-        for(ServicePassword p: passwords) {
+        for (ServicePassword p : passwords) {
             if (p.getId().equals(id)) {
                 return new ServicePasswordDTO(
                         p.getId(),

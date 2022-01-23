@@ -8,7 +8,6 @@ import pl.edu.pw.manager.domain.User;
 import pl.edu.pw.manager.security.cipher.AESAdapter;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -24,6 +23,7 @@ public class DbInit implements CommandLineRunner {
     @Override
     public void run(String... args) {
         this.userRepository.deleteAll();
+        AESAdapter aes = new AESAdapter();
 
         User dan = new User();
         dan.setUsername("Maciek");
@@ -31,9 +31,14 @@ public class DbInit implements CommandLineRunner {
         dan.setMasterPassword(passwordEncoder.encode("321"));
 
         List<ServicePassword> passwords = new ArrayList<>();
-        passwords.add(new ServicePassword(null, "Facebook", "haslo"));
-        passwords.add(new ServicePassword(null, "Twitter", "haslo"));
-        passwords.add(new ServicePassword(null, "Isod", "haslo"));
+        try {
+            passwords.add(new ServicePassword(null, "Facebook", aes.encrypt("haslo", "321")));
+            passwords.add(new ServicePassword(null, "Twitter", aes.encrypt("haslo", "321")));
+            passwords.add(new ServicePassword(null, "Isod", aes.encrypt("haslo", "321")));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         dan.setPasswords(passwords);
 
         this.userRepository.save(dan);
