@@ -58,6 +58,7 @@ public class HomeController {
 
     @GetMapping("/show/{id}")
     public String showPasswordView(Model model, @PathVariable("id") Long id) {
+        model.addAttribute("operationName", "Show");
         model.addAttribute("masterPassword", new TextDTO());
         model.addAttribute("postURL", "/show/" + id);
         return "master_password_form";
@@ -73,19 +74,23 @@ public class HomeController {
         } catch (AccessControlException e) {
             logger.log(Level.SEVERE, e.getMessage() + ". Password id=" + id, e.getCause());
             model.addAttribute("error", e.getMessage() + ". Please check your URL");
+            model.addAttribute("operationName", "Show");
             return "master_password_form";
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
+            model.addAttribute("operationName", "Show");
             return "master_password_form";
         } catch (Exception e) {
             logger.log(Level.SEVERE, e.getMessage(), e.getCause());
             model.addAttribute("error", "Unexpected error has occurred");
+            model.addAttribute("operationName", "Show");
             return "master_password_form";
         }
     }
 
     @GetMapping("/delete/{id}")
     public String deletePasswordView(Model model, @PathVariable("id") Long id) {
+        model.addAttribute("operationName", "Delete");
         model.addAttribute("masterPassword", new TextDTO());
         model.addAttribute("postURL", "/delete/" + id);
         return "master_password_form";
@@ -100,13 +105,16 @@ public class HomeController {
         } catch (AccessControlException e) {
             logger.log(Level.SEVERE, e.getMessage() + ". Password id=" + id, e.getCause());
             model.addAttribute("error", e.getMessage() + ". Please check your URL");
+            model.addAttribute("operationName", "Delete");
             return "master_password_form";
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
+            model.addAttribute("operationName", "Delete");
             return "master_password_form";
         } catch (Exception e) {
             logger.log(Level.SEVERE, e.getMessage(), e.getCause());
             model.addAttribute("error", "Unexpected error has occurred");
+            model.addAttribute("operationName", "Delete");
             return "master_password_form";
         }
     }
